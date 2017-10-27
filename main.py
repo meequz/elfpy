@@ -1,5 +1,4 @@
 import sys
-import types
 
 
 class Elframe:
@@ -60,5 +59,8 @@ def bar(*a):
 
 
 sys.setprofile(traceit)
-a = A()
-a.foo(1)
+
+
+if __name__ == '__main__':
+    a = A()
+    a.foo(1)
