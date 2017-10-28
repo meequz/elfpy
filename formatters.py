@@ -1,12 +1,12 @@
 import settings
-from utils import import_string
+import utils
 
 
 LADDER_FIRST_LINE = True
 
 
 def get_formatter_class():
-    return import_string(settings.FORMATTER)
+    return utils.import_string(settings.FORMATTER)
 
 
 class BaseFormatter:
@@ -16,8 +16,19 @@ class BaseFormatter:
         self.parent_elframe = parent_elframe
         self.current_elframe = current_elframe
     
+    def colorize(sefl, elframe):
+        if elframe.is_func:
+            elframe_str = utils.to_green(str(elframe))
+        elif elframe.is_class:
+            elframe_str = utils.to_yellow(str(elframe))
+        else:
+            elframe_str = str(elframe)
+        return elframe_str
+    
     def __str__(self):
-        return self.template.format(self.parent_elframe, self.current_elframe)
+        parent = self.colorize(self.parent_elframe)
+        current = self.colorize(self.current_elframe)
+        return self.template.format(parent, current)
 
 
 class NovelFormatter(BaseFormatter):
@@ -34,7 +45,7 @@ class NovelFormatter(BaseFormatter):
                 elframe.class_id)
             return res
         
-        return "'{}'".format(elframe)
+        return "'{}'".format(self.colorize(elframe))
     
     def format_current(self, elframe):
         if elframe.func_name == '__init__':
@@ -44,7 +55,7 @@ class NovelFormatter(BaseFormatter):
                 elframe.filename, elframe.class_type_str, elframe.class_id)
             return res
         
-        return "'{}'".format(elframe)
+        return "'{}'".format(self.colorize(elframe))
     
     def __str__(self):
         parent_str = self.format_parent(self.parent_elframe)
@@ -69,11 +80,13 @@ class LadderFormatter(BaseFormatter):
     
     def __str__(self):
         global LADDER_FIRST_LINE
+        parent = self.colorize(self.parent_elframe)
+        current = self.colorize(self.current_elframe)
+        
         if LADDER_FIRST_LINE:
             LADDER_FIRST_LINE = False
-            line = '{}\n    {}'.format(self.parent_elframe,
-                                       self.current_elframe)
+            line = '{}\n    {}'.format(parent, current)
         else:
             tabs = '    ' * self.nesting
-            line = self.template.format(tabs, self.current_elframe)
+            line = self.template.format(tabs, current)
         return line

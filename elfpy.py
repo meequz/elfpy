@@ -35,6 +35,10 @@ class Elframe:
         return self.frame and 'self' in self.frame.f_locals
     
     @property
+    def is_func(self):
+        return not self.is_class and not self.is_module
+    
+    @property
     def filename(self):
         if self.frame:
             return self.frame.f_code.co_filename[:-3]
