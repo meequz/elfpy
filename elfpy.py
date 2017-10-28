@@ -1,4 +1,5 @@
 import sys
+import time
 
 
 # FIXME
@@ -16,7 +17,7 @@ class Elframe:
         if self.is_module:
             return self.filename
         
-        func_owner = self.class_type + self.class_id or self.filename
+        func_owner = self.class_type_str + self.class_id_str or self.filename
         if self.is_class:
             func_owner = '{}.{}'.format(self.filename, func_owner)
         output = '{}.{}()'.format(func_owner, self.func_name)
@@ -43,15 +44,40 @@ class Elframe:
     @property
     def class_id(self):
         if self.is_class:
-            class_id_ = id(self.frame.f_locals['self'])
-            return '({})'.format(class_id_)
+            return id(self.frame.f_locals['self'])
+    
+    @property
+    def class_id_str(self):
+        if self.class_id:
+            return '({})'.format(self.class_id)
         return ''
     
     @property
     def class_type(self):
         if self.is_class:
             return self.frame.f_locals['self'].__class__.__name__
+    
+    @property
+    def class_type_str(self):
+        if self.class_type:
+            return self.class_type
         return ''
+
+
+class Formatter:
+    
+    def __init__(self, parent_elframe, current_elframe):
+        self.parent_elframe = parent_elframe
+        self.current_elframe = current_elframe
+    
+    def __str__(self):
+        return '{} -> {}'.format(self.parent_elframe, self.current_elframe)
+
+
+class NovelFormatter(Formatter):
+    
+    def __str__(self):
+        pass
 
 
 def check_banned_words(line):
@@ -67,9 +93,11 @@ def traceit(frame, event, arg):
 
     current_frame = Elframe(frame)
     parent_frame = Elframe(frame.f_back)
-    line = '{} -> {}'.format(parent_frame, current_frame)
+    formatter = Formatter(parent_frame, current_frame)
+    line = str(formatter)
     if not check_banned_words(line):
         print(line)
+        time.sleep(0.5)
 
 
 sys.setprofile(traceit)
