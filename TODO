@@ -13,3 +13,7 @@ test called test.A(140379755009584).__init__()
 - NovelFormatter may have much more beautiful output
 - Colors for different types - module, class, func
 - Exclude standart lib?
+- Django support
+- Any other loop-based aps support
+- Ability to ban some calls with settings
+- Ability to stop after specified calls number

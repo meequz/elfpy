@@ -1,6 +1,7 @@
 import sys
 import time
 
+import settings
 from formatters import get_formatter_class
 
 WTF = 'WTF?!'
@@ -76,14 +77,14 @@ def check_banned_words(line):
 def traceit(frame, event, arg):
     if event not in ['call', 'c_call']:
         return
-
+    
     current_frame = Elframe(frame)
     parent_frame = Elframe(frame.f_back)
     formatter = get_formatter_class()(parent_frame, current_frame)
     line = str(formatter)
     if not check_banned_words(line) and not line == SKIPME:
         print(line)
-        time.sleep(0.5)
+        time.sleep(settings.DELAY)
 
 
 sys.setprofile(traceit)

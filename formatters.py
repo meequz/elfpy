@@ -2,11 +2,14 @@ import settings
 from utils import import_string
 
 
+LADDER_FIRST_LINE = True
+
+
 def get_formatter_class():
     return import_string(settings.FORMATTER)
 
 
-class DefaultFormatter:
+class BaseFormatter:
     template = '{} -> {}'
     
     def __init__(self, parent_elframe, current_elframe):
@@ -17,7 +20,7 @@ class DefaultFormatter:
         return self.template.format(self.parent_elframe, self.current_elframe)
 
 
-class NovelFormatter(DefaultFormatter):
+class NovelFormatter(BaseFormatter):
     template = '{} called {}'
     
     def format_parent(self, elframe):
@@ -49,5 +52,28 @@ class NovelFormatter(DefaultFormatter):
         return self.template.format(parent_str, current_str)
 
 
-class LadderFormatter(DefaultFormatter):
-    template = '\n    '
+class LadderFormatter(BaseFormatter):
+    template = '{}{}'
+    
+    def __init__(self, parent_elframe, current_elframe):
+        self.parent_elframe = parent_elframe
+        self.current_elframe = current_elframe
+        self.nesting = self.get_nesting(current_elframe.frame)
+    
+    def get_nesting(self, frame):
+        nesting = 0
+        while getattr(frame, 'f_back'):
+            nesting += 1
+            frame = frame.f_back
+        return nesting
+    
+    def __str__(self):
+        global LADDER_FIRST_LINE
+        if LADDER_FIRST_LINE:
+            LADDER_FIRST_LINE = False
+            line = '{}\n    {}'.format(self.parent_elframe,
+                                       self.current_elframe)
+        else:
+            tabs = '    ' * self.nesting
+            line = self.template.format(tabs, self.current_elframe)
+        return line

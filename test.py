@@ -10,6 +10,7 @@ class A(object):
     
     def foo(self, b):
         bar(b)
+        bar(b)
 
 
 def bar(*a):
