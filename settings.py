@@ -1,0 +1,1 @@
+FORMATTER = 'formatters.DefaultFormatter'

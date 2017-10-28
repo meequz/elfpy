@@ -1,8 +1,8 @@
 import sys
 import time
 
+from formatters import get_formatter_class
 
-# FIXME
 WTF = 'WTF?!'
 SKIPME = 'SKIPME!!'
 BANNED_WORDS = ['importlib._bootstr', WTF]
@@ -66,49 +66,6 @@ class Elframe:
         return ''
 
 
-class Formatter:
-    template = '{} -> {}'
-    
-    def __init__(self, parent_elframe, current_elframe):
-        self.parent_elframe = parent_elframe
-        self.current_elframe = current_elframe
-    
-    def __str__(self):
-        return self.template.format(self.parent_elframe, self.current_elframe)
-
-
-class NovelFormatter(Formatter):
-    template = '{} called {}'
-    
-    def format_parent(self, elframe):
-        if elframe.is_module:
-            return "module '{}'".format(elframe)
-        
-        if elframe.is_class:
-            elframe_template = "'{}' method of '{}.{}({})'"
-            res = elframe_template.format(
-                elframe.func_name, elframe.filename, elframe.class_type,
-                elframe.class_id)
-            return res
-        
-        return "'{}'".format(elframe)
-    
-    def format_current(self, elframe):
-        if elframe.func_name == '__init__':
-            self.template = '{} created instance of {}'
-            elframe_template = "'{}.{}' class with ID {}"
-            res = elframe_template.format(
-                elframe.filename, elframe.class_type_str, elframe.class_id)
-            return res
-        
-        return "'{}'".format(elframe)
-    
-    def __str__(self):
-        parent_str = self.format_parent(self.parent_elframe)
-        current_str = self.format_current(self.current_elframe)
-        return self.template.format(parent_str, current_str)
-
-
 def check_banned_words(line):
     for word in BANNED_WORDS:
         if word in line:
@@ -122,8 +79,7 @@ def traceit(frame, event, arg):
 
     current_frame = Elframe(frame)
     parent_frame = Elframe(frame.f_back)
-    # formatter = Formatter(parent_frame, current_frame)
-    formatter = NovelFormatter(parent_frame, current_frame)
+    formatter = get_formatter_class()(parent_frame, current_frame)
     line = str(formatter)
     if not check_banned_words(line) and not line == SKIPME:
         print(line)
