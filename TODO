@@ -1,0 +1,11 @@
+- Make these two lines one:
+```
+test called test.A()
+test called test.A(140379755009584).__init__()
+```
+
+- Add tests
+- Check when two calls in one func
+- Check when code is in __init__.py file
+- Recognize when single function performs return (check do we really need it)
+- Add visualization

@@ -3,7 +3,8 @@ import time
 
 
 # FIXME
-BANNED_WORDS = ['importlib._bootstr']
+WTF = 'WTF?!'
+BANNED_WORDS = ['importlib._bootstr', WTF]
 
 
 class Elframe:
@@ -13,7 +14,7 @@ class Elframe:
     
     def __str__(self):
         if not self.frame:
-            return 'WTF?!'
+            return WTF
         if self.is_module:
             return self.filename
         
@@ -76,8 +77,13 @@ class Formatter:
 
 class NovelFormatter(Formatter):
     
+    def format_elframe(self, elframe):
+        return str(elframe)
+    
     def __str__(self):
-        pass
+        parent_str = self.format_elframe(self.parent_elframe)
+        current_str = self.format_elframe(self.current_elframe)
+        return '{} called {}'.format(parent_str, current_str)
 
 
 def check_banned_words(line):
