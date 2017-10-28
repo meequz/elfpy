@@ -2,6 +2,10 @@ import settings
 from utils import import_string
 
 
+def get_formatter_class():
+    return import_string(settings.FORMATTER)
+
+
 class DefaultFormatter:
     template = '{} -> {}'
     
@@ -45,5 +49,5 @@ class NovelFormatter(DefaultFormatter):
         return self.template.format(parent_str, current_str)
 
 
-def get_formatter_class():
-    return import_string(settings.FORMATTER)
+class LadderFormatter(DefaultFormatter):
+    template = '\n    '
