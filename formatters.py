@@ -87,6 +87,6 @@ class LadderFormatter(BaseFormatter):
             LADDER_FIRST_LINE = False
             line = '{}\n    {}'.format(parent, current)
         else:
-            tabs = '    ' * self.nesting
-            line = self.template.format(tabs, current)
+            indentation = '    ' * self.nesting
+            line = self.template.format(indentation, current)
         return line

@@ -5,14 +5,13 @@ test called test.A(140379755009584).__init__()
 ```
 
 - Add tests
-- Check when two calls in one func
 - Check when code is in __init__.py file
 - Check for static methods
-- Recognize when single function performs return (check do we really need it)
-- Add visualization
+- Recognize when single function performs return (do we really need it?)
+- Add visualization (if we invent something interesting and useful)
 - NovelFormatter may have much more beautiful output
-- Exclude standart lib?
+- Make a setting to toggle exclusion of a standart lib
 - Django support
-- Any other loop-based aps support
-- Ability to ban some calls with settings
+- Any other loop-based apps support
 - Ability to stop after specified calls number
+- Make BANNED_WORDS are regexes

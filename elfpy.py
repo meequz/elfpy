@@ -1,12 +1,10 @@
 import sys
 import time
 
+import constants
 import settings
+import utils
 from formatters import get_formatter_class
-
-WTF = 'WTF?!'
-SKIPME = 'SKIPME!!'
-BANNED_WORDS = ['importlib._bootstr', WTF]
 
 
 class Elframe:
@@ -16,7 +14,7 @@ class Elframe:
     
     def __str__(self):
         if not self.frame:
-            return WTF
+            return constants.WTF
         if self.is_module:
             return self.filename
         
@@ -71,13 +69,6 @@ class Elframe:
         return ''
 
 
-def check_banned_words(line):
-    for word in BANNED_WORDS:
-        if word in line:
-            return True
-    return False
-
-
 def traceit(frame, event, arg):
     if event not in ['call', 'c_call']:
         return
@@ -86,7 +77,7 @@ def traceit(frame, event, arg):
     parent_frame = Elframe(frame.f_back)
     formatter = get_formatter_class()(parent_frame, current_frame)
     line = str(formatter)
-    if not check_banned_words(line) and not line == SKIPME:
+    if not utils.is_banned(line):
         print(line)
         time.sleep(settings.DELAY)
 
